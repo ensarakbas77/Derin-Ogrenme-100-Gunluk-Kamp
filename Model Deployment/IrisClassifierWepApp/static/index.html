@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Iris Classifier — AI Çiçek Tanıma</title>
+  <meta name="description" content="PyTorch tabanlı derin öğrenme modeliyle Iris çiçeği türünü tahmin edin." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;1,14..32,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+  <!-- Animated background -->
+  <div class="bg-mesh"></div>
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast" role="alert" aria-live="assertive"></div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <a class="brand" href="/" aria-label="Ana sayfa">
+        <svg class="brand-flower" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <ellipse cx="20" cy="10" rx="5" ry="9" fill="#a78bfa" opacity="0.9"/>
+          <ellipse cx="20" cy="10" rx="5" ry="9" fill="#a78bfa" opacity="0.9" transform="rotate(60 20 20)"/>
+          <ellipse cx="20" cy="10" rx="5" ry="9" fill="#7c6af7" opacity="0.8" transform="rotate(120 20 20)"/>
+          <ellipse cx="20" cy="10" rx="5" ry="9" fill="#a78bfa" opacity="0.9" transform="rotate(180 20 20)"/>
+          <ellipse cx="20" cy="10" rx="5" ry="9" fill="#7c6af7" opacity="0.8" transform="rotate(240 20 20)"/>
+          <ellipse cx="20" cy="10" rx="5" ry="9" fill="#a78bfa" opacity="0.9" transform="rotate(300 20 20)"/>
+          <circle cx="20" cy="20" r="5" fill="#e0d7ff"/>
+        </svg>
+        <span class="brand-name">IrisAI</span>
+      </a>
+      <div class="status-pill">
+        <span class="status-dot"></span>
+        <span>Model Aktif</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-tag">PyTorch · Derin Öğrenme</div>
+      <h1 class="hero-title">
+        <span class="grad">Iris Çiçeğini</span><br>Yapay Zeka ile Tanı
+      </h1>
+      <p class="hero-sub">
+        Sepal ve petal ölçümlerini gir, modelimiz hangi türden olduğunu anında söylesin.
+      </p>
+    </section>
+
+    <!-- App Panel -->
+    <div class="panel">
+
+      <!-- Left: Form -->
+      <section class="panel-left" aria-label="Ölçüm girişi">
+
+        <div class="section-label">
+          <span class="section-dot sepal-dot"></span>Sepal (Çanak Yaprak)
+        </div>
+
+        <!-- Sepal -->
+        <div class="slider-group">
+          <div class="slider-row">
+            <label for="sepal-length">Uzunluk</label>
+            <span class="val-badge" id="sl-val">5.1 cm</span>
+          </div>
+          <input id="sepal-length" class="slider" type="range" min="1" max="9" step="0.1" value="5.1" />
+          <div class="slider-track-labels"><span>1</span><span>9</span></div>
+        </div>
+
+        <div class="slider-group">
+          <div class="slider-row">
+            <label for="sepal-width">Genişlik</label>
+            <span class="val-badge" id="sw-val">3.5 cm</span>
+          </div>
+          <input id="sepal-width" class="slider" type="range" min="1" max="6" step="0.1" value="3.5" />
+          <div class="slider-track-labels"><span>1</span><span>6</span></div>
+        </div>
+
+        <div class="section-label" style="margin-top:8px;">
+          <span class="section-dot petal-dot"></span>Petal (Taç Yaprak)
+        </div>
+
+        <!-- Petal -->
+        <div class="slider-group">
+          <div class="slider-row">
+            <label for="petal-length">Uzunluk</label>
+            <span class="val-badge" id="pl-val">1.4 cm</span>
+          </div>
+          <input id="petal-length" class="slider" type="range" min="0.5" max="8" step="0.1" value="1.4" />
+          <div class="slider-track-labels"><span>0.5</span><span>8</span></div>
+        </div>
+
+        <div class="slider-group">
+          <div class="slider-row">
+            <label for="petal-width">Genişlik</label>
+            <span class="val-badge" id="pw-val">0.2 cm</span>
+          </div>
+          <input id="petal-width" class="slider" type="range" min="0.1" max="3" step="0.1" value="0.2" />
+          <div class="slider-track-labels"><span>0.1</span><span>3</span></div>
+        </div>
+
+        <!-- Preset buttons -->
+        <div class="presets">
+          <span class="presets-label">Hazır Örnek:</span>
+          <button class="preset-btn" id="pre-setosa"
+            data-sl="5.1" data-sw="3.5" data-pl="1.4" data-pw="0.2">
+            🌸 Setosa
+          </button>
+          <button class="preset-btn" id="pre-versicolor"
+            data-sl="6.0" data-sw="2.7" data-pl="4.1" data-pw="1.3">
+            🌿 Versicolor
+          </button>
+          <button class="preset-btn" id="pre-virginica"
+            data-sl="6.7" data-sw="3.3" data-pl="5.7" data-pw="2.1">
+            🌺 Virginica
+          </button>
+        </div>
+
+        <button class="predict-btn" id="predict-btn" type="button">
+          <span class="predict-btn-icon" aria-hidden="true">✦</span>
+          <span id="predict-btn-text">Tahmin Et</span>
+          <span class="predict-spinner" id="predict-spinner" hidden aria-hidden="true"></span>
+        </button>
+
+      </section>
+
+      <!-- Divider -->
+      <div class="panel-divider" aria-hidden="true"></div>
+
+      <!-- Right: Result -->
+      <section class="panel-right" id="panel-right" aria-label="Tahmin sonucu" aria-live="polite">
+
+        <!-- Idle -->
+        <div class="idle-state" id="idle-state">
+          <div class="idle-visual" aria-hidden="true">
+            <div class="iris-ring ring-outer"></div>
+            <div class="iris-ring ring-mid"></div>
+            <div class="iris-ring ring-inner"></div>
+            <span class="idle-emoji">🔮</span>
+          </div>
+          <p class="idle-hint">
+            Sliderları ayarla ya da hazır örnek seç,<br>
+            ardından <strong>Tahmin Et</strong>'e tıkla.
+          </p>
+        </div>
+
+        <!-- Error state -->
+        <div class="error-state" id="error-state" hidden>
+          <div class="error-icon" aria-hidden="true">⚠️</div>
+          <p class="error-state-title">Tahmin Başarısız</p>
+          <p class="error-state-msg" id="error-state-msg">Sunucuya bağlanılamadı.</p>
+          <button class="error-retry-btn" id="error-retry-btn" type="button">Tekrar Dene</button>
+        </div>
+
+        <!-- Result -->
+        <div class="result-state" id="result-state" hidden>
+
+          <div class="result-top">
+            <div class="result-icon-wrap" id="result-icon-wrap">
+              <span class="result-emoji" id="result-emoji">🌸</span>
+            </div>
+            <div>
+              <p class="result-label">Tahmin Edilen Tür</p>
+              <h2 class="result-name" id="result-name">—</h2>
+            </div>
+          </div>
+
+          <div class="conf-block">
+            <div class="conf-header">
+              <span>Güven Skoru</span>
+              <strong id="conf-pct">—</strong>
+            </div>
+            <div class="conf-track">
+              <div class="conf-fill" id="conf-fill"></div>
+            </div>
+          </div>
+
+          <p class="result-desc" id="result-desc"></p>
+
+          <div class="prob-section">
+            <p class="prob-heading">Sınıf Olasılıkları</p>
+            <div class="prob-bars" id="prob-bars"></div>
+          </div>
+
+          <div class="measure-chips" id="measure-chips"></div>
+
+        </div>
+      </section>
+
+    </div><!-- /panel -->
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <span class="stat-icon">⚡</span>
+        <span class="stat-val">~2ms</span>
+        <span class="stat-lbl">Yanıt Süresi</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">🎯</span>
+        <span class="stat-val">%97+</span>
+        <span class="stat-lbl">Doğruluk Oranı</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">🧠</span>
+        <span class="stat-val">3 Katman</span>
+        <span class="stat-lbl">Sinir Ağı</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">🌸</span>
+        <span class="stat-val">3 Tür</span>
+        <span class="stat-lbl">Sınıflandırma</span>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <p>IrisAI — PyTorch &amp; FastAPI ile geliştirildi</p>
+  </footer>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
