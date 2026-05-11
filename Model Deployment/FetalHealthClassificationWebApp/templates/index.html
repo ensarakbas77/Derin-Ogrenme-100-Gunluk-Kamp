@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fetal Sağlık Sınıflandırıcı — Yapay Zeka Destekli KTG Analizi</title>
+  <meta name="description" content="11 KTG özellik değerini girerek yapay zeka tabanlı fetal sağlık tahmini alın." />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+
+<body>
+
+  <!-- Animated background mesh -->
+  <div class="bg-mesh" aria-hidden="true">
+    <span></span><span></span><span></span>
+  </div>
+
+  <div class="page">
+
+    <!-- ══════════════════════════════════════════════════
+       SIDEBAR
+  ══════════════════════════════════════════════════ -->
+    <aside class="sidebar">
+
+      <!-- Logo -->
+      <div class="sidebar-logo">
+        <div class="logo-icon">🫀</div>
+        <div class="logo-text">
+          <strong>FetalAI</strong>
+          <span>Sağlık Analiz Sistemi</span>
+        </div>
+      </div>
+
+      <!-- ECG animation -->
+      <div class="ecg-wrapper" aria-hidden="true">
+        <svg viewBox="0 0 240 60" height="60">
+          <path class="ecg-path" d="
+          M0,30 L30,30 L35,30 L40,10 L45,50 L50,5 L55,55 L60,30
+          L90,30 L95,30 L100,10 L105,50 L110,5 L115,55 L120,30
+          L150,30 L155,30 L160,10 L165,50 L170,5 L175,55 L180,30
+          L210,30 L240,30
+        " />
+        </svg>
+      </div>
+
+      <!-- Sınıf bilgisi -->
+      <div>
+        <div class="sidebar-section-label">Tahmin Sınıfları</div>
+        <div class="class-pills">
+          <div class="pill ok">
+            <span class="dot"></span>Normal — Sağlıklı durum
+          </div>
+          <div class="pill warn">
+            <span class="dot"></span>Şüpheli — İzlem gerekli
+          </div>
+          <div class="pill bad">
+            <span class="dot"></span>Patolojik — Acil müdahale
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- ══════════════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════════════ -->
+    <main class="content">
+
+      <!-- Top bar -->
+      <div class="topbar">
+        <div class="topbar-title">
+          <h1>Fetal Sağlık Sınıflandırıcı</h1>
+          <p>11 KTG özelliğini girin, model fetal sağlık durumunu tahmin etsin.</p>
+        </div>
+        <div class="badge-ai">Yapay Zeka Destekli</div>
+      </div>
+
+      <!-- Uyarı -->
+      <div class="alert-strip" role="alert">
+        <span class="ai">⚠️</span>
+        <span>
+          <strong>Tıbbi Uyarı:</strong>
+          Bu sonuç yalnızca yapay zeka tabanlı tahmin amaçlıdır, kesin tıbbi tanı yerine geçmez.
+          Klinik karar için lütfen bir sağlık uzmanına başvurun.
+        </span>
+      </div>
+
+      <!-- Form kartı -->
+      <div class="form-card">
+
+        <div class="form-header">
+          <div class="form-header-title">KTG Özellik Değerleri</div>
+          <div class="field-count">11 alan</div>
+        </div>
+
+        <form id="predict-form" novalidate>
+          <div class="inputs-grid">
+
+            <div class="field">
+              <label for="baseline_value">Baz Değer (atım/dak)</label>
+              <div class="hint">Tipik: 110 – 160</div>
+              <input id="baseline_value" type="number" step="any" name="baseline_value" placeholder="örn. 120"
+                aria-required="true" />
+            </div>
+
+            <div class="field">
+              <label for="accelerations">Akselerasyon (saniyede)</label>
+              <div class="hint">Tipik: 0 – 0.019</div>
+              <input id="accelerations" type="number" step="any" name="accelerations" placeholder="örn. 0.003"
+                aria-required="true" />
+            </div>
+
+            <div class="field">
+              <label for="fetal_movement">Fetal Hareket (saniyede)</label>
+              <div class="hint">Tipik: 0 – 0.481</div>
+              <input id="fetal_movement" type="number" step="any" name="fetal_movement" placeholder="örn. 0.0"
+                aria-required="true" />
+            </div>
+
+            <div class="field">
+              <label for="uterine_contractions">Rahim Kasılmaları (saniyede)</label>
+              <div class="hint">Tipik: 0 – 0.015</div>
+              <input id="uterine_contractions" type="number" step="any" name="uterine_contractions"
+                placeholder="örn. 0.004" aria-required="true" />
+            </div>
+
+            <div class="field">
+              <label for="light_decelerations">Hafif Deselerasyon (saniyede)</label>
+              <div class="hint">Tipik: 0 – 0.015</div>
+              <input id="light_decelerations" type="number" step="any" name="light_decelerations" placeholder="örn. 0.0"
+                aria-required="true" />
+            </div>
+
+            <div class="field">
+              <label for="severe_decelerations">Şiddetli Deselerasyon (saniyede)</label>
+              <div class="hint">Tipik: 0 – 0.001</div>
+              <input id="severe_decelerations" type="number" step="any" name="severe_decelerations"
+                placeholder="örn. 0.0" aria-required="true" />
+            </div>
+
+            <div class="field">
+              <label for="prolongued_decelerations">Uzamış Deselerasyon (saniyede)</label>
+              <div class="hint">Tipik: 0 – 0.005</div>
+              <input id="prolongued_decelerations" type="number" step="any" name="prolongued_decelerations"
+                placeholder="örn. 0.0" aria-required="true" />
+            </div>
+
+            <div class="field">
+              <label for="abnormal_short_term_variability">Anormal Kısa Dönem Değişkenlik (%)</label>
+              <div class="hint">Tipik: 12 – 87</div>
+              <input id="abnormal_short_term_variability" type="number" step="any"
+                name="abnormal_short_term_variability" placeholder="örn. 25" aria-required="true" />
+            </div>
+
+            <div class="field">
+              <label for="mean_value_of_short_term_variability">Ort. Kısa Dönem Değişkenlik</label>
+              <div class="hint">Tipik: 0.2 – 7.0</div>
+              <input id="mean_value_of_short_term_variability" type="number" step="any"
+                name="mean_value_of_short_term_variability" placeholder="örn. 1.5" aria-required="true" />
+            </div>
+
+            <div class="field">
+              <label for="percentage_of_time_with_abnormal_long_term_variability">Anormal Uzun Dönem Değişkenlik
+                (%)</label>
+              <div class="hint">Tipik: 0 – 91</div>
+              <input id="percentage_of_time_with_abnormal_long_term_variability" type="number" step="any"
+                name="percentage_of_time_with_abnormal_long_term_variability" placeholder="örn. 5"
+                aria-required="true" />
+            </div>
+
+            <div class="field">
+              <label for="mean_value_of_long_term_variability">Ort. Uzun Dönem Değişkenlik</label>
+              <div class="hint">Tipik: 0 – 50.7</div>
+              <input id="mean_value_of_long_term_variability" type="number" step="any"
+                name="mean_value_of_long_term_variability" placeholder="örn. 10" aria-required="true" />
+            </div>
+
+          </div><!-- /.inputs-grid -->
+
+          <!-- Error toast -->
+          <div id="error-toast" role="alert" aria-live="assertive">
+            <span>❌</span>
+            <span id="error-msg"></span>
+          </div>
+
+          <div class="form-footer">
+            <button id="btn-predict" type="submit" class="btn-predict">
+              <div id="spinner" class="spinner" aria-hidden="true"></div>
+              <span id="btn-label">Sağlık Durumunu Tahmin Et</span>
+            </button>
+            <button type="reset" class="btn-reset" id="btn-reset">Sıfırla</button>
+          </div>
+
+        </form>
+      </div><!-- /.form-card -->
+
+      <!-- Sonuç -->
+      <section id="result-section" aria-live="polite" aria-label="Tahmin Sonucu">
+        <div id="result-card" class="result-card">
+
+          <div class="result-banner">
+            <div id="result-emoji" class="result-emoji"></div>
+            <div class="result-text">
+              <h2 id="result-label"></h2>
+              <div id="result-meta" class="meta"></div>
+            </div>
+            <div class="confidence-chip">
+              <span id="conf-pct" class="pct"></span>
+              <span class="lbl">güven oranı</span>
+            </div>
+          </div>
+
+          <div class="result-body">
+            <div class="prob-label">Sınıf Olasılıkları</div>
+            <div id="prob-list" class="prob-list"></div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+  </div><!-- /.page -->
+
+  <script src="/static/script.js"></script>
+</body>
+
+</html>
