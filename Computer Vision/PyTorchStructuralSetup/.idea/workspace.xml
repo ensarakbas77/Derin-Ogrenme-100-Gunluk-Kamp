@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="51d4b363-44eb-4a7d-b450-1f968522c2a3" name="Changes" comment="" />
+    <list default="true" id="51d4b363-44eb-4a7d-b450-1f968522c2a3" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../YoloObjectDetectionExample/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../YoloObjectDetectionExample/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../YoloObjectDetectionExample/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../YoloObjectDetectionExample/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../YoloObjectDetectionExample/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../YoloObjectDetectionExample/requirements.txt" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

@@ -1,0 +1,8 @@
+ultralytics
+opencv-python
+transformers
+torch
+torchvision
+pillow
+requests
+gradio
